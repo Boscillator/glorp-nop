@@ -81,8 +81,16 @@ export const actions = {
             console.log('Got User')
             console.log(user)
             context.commit('signinFinished', user)
+            context.dispatch('storeUserInDatabase')
             context.dispatch('createDatabaseListeners')
         })
+    },
+    storeUserInDatabase(context){
+        let user = context.state.user
+        firebase.firestore().collection("users").doc(user.uid).set({
+            displayName: user.displayName,
+            email: user.email
+        }, {merge: true})
     },
     createDatabaseListeners(context) {
         let db = firebase.firestore()

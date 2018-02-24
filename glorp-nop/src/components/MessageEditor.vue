@@ -9,7 +9,7 @@
             </md-field>
             <md-field>
               <label>Message</label>
-              <md-textarea v-model="body"></md-textarea>
+              <md-input v-model="body"></md-input>
             </md-field>
         </md-dialog-content>
         <md-dialog-actions>
@@ -21,7 +21,7 @@
           <md-empty-state
             md-icon="send"
             md-label="Sending"
-            md-description="Make some friends!"
+            md-description="Your message is being hand delivered across the tubes"
             />
       </template>
   </md-dialog>

@@ -12,7 +12,7 @@
             <md-empty-state
                 md-icon="message"
                 md-label="You have no new messages!"
-                md-description="You have cleared all your messages."
+                md-description="Get some friends!"
                 />
         </div>
   </div>
