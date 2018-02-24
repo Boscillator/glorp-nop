@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 export const state = {
     show_message_editor: false,
     sending_message: false,
+    user: null,
     messages: [
         {
             id:'1',
@@ -17,6 +18,10 @@ export const state = {
     ]
 }
 
+export const getters = {
+    isSignedIn: state => user!=null
+}
+
 export const mutations = {
     addMessage(state, payload) {
         state.messages.push( { 
@@ -25,6 +30,7 @@ export const mutations = {
             body: payload.message.body
         })
     },
+    
     removeMessage(state, id) {
         //Keep all messages who id is not the one that is being deleted
         state.messages = state.messages.filter( message => message.id != id )

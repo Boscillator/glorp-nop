@@ -18,19 +18,22 @@
 
     <!--Popups-->
     <MessageEditor />
+    <Signin />
   </div>
 </template>
 
 <script>
 import MessagesList from '@/components/MessagesList'
 import MessageEditor from '@/components/MessageEditor'
+import Signin from '@/components/Signin'
 
 export default {
   name: "app",
   data: () => ({}),
   components: {
     MessagesList,
-    MessageEditor
+    MessageEditor,
+    Signin
   },
   methods: {
     composeMessage() {
