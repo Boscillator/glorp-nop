@@ -16,7 +16,7 @@ Vue.config.productionTip = false
 const store = new Vuex.Store(Store)
 
 /* eslint-disable no-new */
-new Vue({
+const app = new Vue({
   el: '#app',
   template: '<App/>',
   store,
