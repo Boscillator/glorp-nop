@@ -7,8 +7,7 @@ describe('mutations', () => {
             'id': 'some_unique_key',
             'message': {
                 'to': 'some_user_id',
-                'from': 'some_other_user_id',
-                'from_name': 'Billy Bob',
+                'from': 'Billy Bob',
                 'body': 'Hi There!'
             }
         }

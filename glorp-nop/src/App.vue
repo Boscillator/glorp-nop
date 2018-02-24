@@ -12,6 +12,7 @@
           </div>
       </md-app-toolbar>
       <md-app-content>
+        <h4>Hello, {{displayName}}</h4>
         <MessagesList />
       </md-app-content>
     </md-app>
@@ -30,6 +31,11 @@ import Signin from '@/components/Signin'
 export default {
   name: "app",
   data: () => ({}),
+  computed: {
+    displayName() {
+      return this.$store.state.user != null ? this.$store.state.user.email : ""
+    }
+  },
   components: {
     MessagesList,
     MessageEditor,

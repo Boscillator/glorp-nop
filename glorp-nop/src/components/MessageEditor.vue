@@ -21,7 +21,7 @@
           <md-empty-state
             md-icon="send"
             md-label="Sending"
-            md-description="You message is being sent"
+            md-description="Make some friends!"
             />
       </template>
   </md-dialog>
