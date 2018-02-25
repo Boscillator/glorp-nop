@@ -113,12 +113,32 @@ export const actions = {
             context.dispatch('createDatabaseListeners')
         })
     },
-    storeUserInDatabase(context) {
+    async storeUserInDatabase(context) {
+        const messaging = firebase.messaging();
+        messaging.usePublicVapidKey("BCwSaYPETm5lHqWbSHgUmGw02tM6dG1YH9PPbsjJOaIRi0G5VzswxLSkzfXQicf_SBGpyNsMPmKyp5b2MVy9ync");
+        if ('serviceWorker' in navigator) {
+            let regisation = await navigator.serviceWorker.register('/static/firebase-messaging-sw.js')
+            console.log(regisation)
+            messaging.useServiceWorker( regisation )
+        }
+
+        try {
+            await messaging.requestPermission()
+        } catch (error) {}
+
+        let token = await messaging.getToken()
+
+        messaging.onMessage(function(payload) {
+            console.log("Message received. ", payload);
+            // ...
+          });
+
         let user = context.state.user
         firebase.firestore().collection("users").doc(user.uid).set({
             displayName: user.displayName,
             email: user.email,
-            photoURL: user.photoURL
+            photoURL: user.photoURL,
+            fcmToken: token
         }, { merge: true })
     },
     createDatabaseListeners(context) {
