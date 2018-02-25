@@ -13,13 +13,7 @@ export const state = {
     user: null,
 
     messages: [],
-    friends: [
-        {
-            id:"yYOrJvhwkMQgBEOzUb0x2DEDhYg1",
-            photoURL:"https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg",
-            displayName: "Frederick Buchanan"
-        }
-    ]
+    friends: []
 }
 
 export const getters = {
@@ -28,7 +22,7 @@ export const getters = {
 
 export const mutations = {
     addMessage(state, payload) {
-        state.messages.push( { 
+        state.messages.push({
             id: payload.id,
             from: payload.message.from,
             body: payload.message.body
@@ -37,7 +31,7 @@ export const mutations = {
 
     removeMessage(state, id) {
         //Keep all messages who id is not the one that is being deleted
-        state.messages = state.messages.filter( message => message.id != id )
+        state.messages = state.messages.filter(message => message.id != id)
     },
     showMessageEditor(state) {
         state.show_message_editor = true
@@ -73,20 +67,23 @@ export const mutations = {
         state.friends.push(friend)
     },
     removeFriend(state, id) {
-        state.friends = state.friends.filter( friend => friend.id != id )
+        state.friends = state.friends.filter(friend => friend.id != id)
+    },
+    resetFriends(state) {
+        state.friends = []
     },
     addingFriend(state, email) {
         state.adding_friend = email
     },
     finishedAddingFriend(state) {
-        state.adding_fried = false
+        state.adding_friend = false
     }
 }
 
 export const actions = {
     deleteMessage(context, id) {
         let db = firebase.firestore()
-        db.collection("messages").doc(id).delete().then(function() {
+        db.collection("messages").doc(id).delete().then(function () {
             context.commit('removeMessage', id)
         })
     },
@@ -106,8 +103,8 @@ export const actions = {
         context.commit('startSignin')
         var provider = new firebase.auth.GoogleAuthProvider();
 
-        firebase.auth().signInWithPopup(provider).then( function(result) {
-            
+        firebase.auth().signInWithPopup(provider).then(function (result) {
+
             let user = result.user;
             console.log('Got User')
             console.log(user)
@@ -116,21 +113,35 @@ export const actions = {
             context.dispatch('createDatabaseListeners')
         })
     },
-    storeUserInDatabase(context){
+    storeUserInDatabase(context) {
         let user = context.state.user
         firebase.firestore().collection("users").doc(user.uid).set({
             displayName: user.displayName,
             email: user.email,
             photoURL: user.photoURL
-        }, {merge: true})
+        }, { merge: true })
     },
     createDatabaseListeners(context) {
         let db = firebase.firestore()
-        console.log('creating listeners')
-        db.collection("messages").where("to","==",context.state.user.email).onSnapshot(function(querySnapshot) {
-            console.log('got snapshot')
-            querySnapshot.docChanges.forEach(function(change) {
-                console.log('got change')
+
+        db.collection("users").doc(context.state.user.uid).onSnapshot(doc => {
+            context.commit('resetFriends')
+            if (doc.data().friends) {
+                doc.data().friends.map(friend => {
+                    const friendRef = db.collection("users").doc(friend)
+                    friendRef.get().then(doc => {
+                        if (doc.exists) {
+                            let friend = doc.data()
+                            friend['id'] = doc.id
+                            context.commit('addFriend', friend)
+                        }
+                    })
+                })
+            }
+        })
+
+        db.collection("messages").where("to", "==", context.state.user.email).onSnapshot(function (querySnapshot) {
+            querySnapshot.docChanges.forEach(function (change) {
                 if (change.type === "added") {
                     context.commit('addMessage', {
                         id: change.doc.id,
@@ -142,12 +153,28 @@ export const actions = {
     },
 
     unfriend(contex, id) {
-        setTimeout( () => {
-            contex.commit('removeFriend',id)
-        },500);
+        contex.commit('removeFriend', id)
+        context.dispatch('saveFreinds')
     },
 
     addFriend(context, email) {
         context.commit('addingFriend', email)
+        firebase.firestore().collection('users').where("email" , "==", email).get().then( snapshot => {
+            snapshot.forEach( doc => {
+                let friend = doc.data()
+                friend['id'] = doc.id
+                context.commit('addFriend', friend)
+            })
+            context.dispatch('saveFriends')  
+        })
+    },
+
+    saveFriends(context) {
+        let friends = context.state.friends.map( friend => friend.id )
+        console.log(friends)
+        firebase.firestore().collection("users").doc(context.state.user.uid).update({
+            friends
+        })
+        context.commit('finishedAddingFriend')
     }
 }

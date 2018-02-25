@@ -31,7 +31,7 @@
 
     <!--Popups-->
     <MessageEditor />
-    <!--<Signin />-->
+    <Signin />
     <FriendsPopup />
   </div>
 </template>

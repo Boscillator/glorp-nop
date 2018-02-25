@@ -23,33 +23,36 @@
 </template>
 
 <script>
-import FriendsList from '@/components/FriendsList'
-import FriendSearch from '@/components/FriendSearch'
+import FriendsList from "@/components/FriendsList";
+import FriendSearch from "@/components/FriendSearch";
 
 export default {
-    name: 'FriendsPopup',
-    computed: {
-        shown() {
-            return this.$store.state.show_friends
-        },
-        addingFriend() {
-            return this.$store.state.adding_friend !== false
-        },
-        addingFriendMessage() {
-            return "You are friending " + this.$store.state.adding_friend
-        }
+  name: "FriendsPopup",
+  computed: {
+    shown() {
+      return this.$store.state.show_friends;
     },
-    methods: {
-        close() {
-            this.$store.commit("hideFriends")
-        }
+    addingFriend() {
+      return this.$store.state.adding_friend !== false;
     },
-    components: {
-        FriendsList,
-        FriendSearch
+    addingFriendMessage() {
+      return "You are friending " + this.$store.state.adding_friend;
     }
-}
+  },
+  methods: {
+    close() {
+      this.$store.commit("hideFriends");
+    }
+  },
+  components: {
+    FriendsList,
+    FriendSearch
+  }
+};
 </script>
 
 <style>
+#friends {
+    width: 110%;
+}
 </style>
