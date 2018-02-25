@@ -5,11 +5,21 @@ import firestore from 'firebase/firestore'
 export const state = {
     show_message_editor: false,
     sending_message: false,
+    show_friends: false,
+    show_navigation: false,
+    adding_friend: false,
 
     is_signing_in: false,
     user: null,
 
-    messages: []
+    messages: [],
+    friends: [
+        {
+            id:"yYOrJvhwkMQgBEOzUb0x2DEDhYg1",
+            photoURL:"https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg",
+            displayName: "Frederick Buchanan"
+        }
+    ]
 }
 
 export const getters = {
@@ -35,6 +45,15 @@ export const mutations = {
     hideMessageEditor(state) {
         state.show_message_editor = false
     },
+    showFriends(state) {
+        state.show_friends = true
+    },
+    hideFriends(state) {
+        state.show_friends = false
+    },
+    toggleNavigation(state) {
+        state.show_navigation = !state.show_navigation
+    },
     startSendMessage(state) {
         state.sending_message = true
     },
@@ -49,6 +68,18 @@ export const mutations = {
     signinFinished(state, user) {
         state.is_signing_in = false
         state.user = user
+    },
+    addFriend(state, friend) {
+        state.friends.push(friend)
+    },
+    removeFriend(state, id) {
+        state.friends = state.friends.filter( friend => friend.id != id )
+    },
+    addingFriend(state, email) {
+        state.adding_friend = email
+    },
+    finishedAddingFriend(state) {
+        state.adding_fried = false
     }
 }
 
@@ -89,7 +120,8 @@ export const actions = {
         let user = context.state.user
         firebase.firestore().collection("users").doc(user.uid).set({
             displayName: user.displayName,
-            email: user.email
+            email: user.email,
+            photoURL: user.photoURL
         }, {merge: true})
     },
     createDatabaseListeners(context) {
@@ -107,5 +139,15 @@ export const actions = {
                 }
             })
         })
+    },
+
+    unfriend(contex, id) {
+        setTimeout( () => {
+            contex.commit('removeFriend',id)
+        },500);
+    },
+
+    addFriend(context, email) {
+        context.commit('addingFriend', email)
     }
 }
