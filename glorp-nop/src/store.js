@@ -122,11 +122,11 @@ export const actions = {
             messaging.useServiceWorker( regisation )
         }
 
+        let token = null;
         try {
             await messaging.requestPermission()
+            token = await messaging.getToken()
         } catch (error) {}
-
-        let token = await messaging.getToken()
 
         messaging.onMessage(function(payload) {
             console.log("Message received. ", payload);
