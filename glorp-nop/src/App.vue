@@ -10,7 +10,7 @@
           </div>
           <div class="md-toolbar-section-end">
             <md-button @click="composeMessage" class="md-icon-button">
-              <md-icon>add</md-icon>
+              <md-icon>send</md-icon>
             </md-button>
           </div>
       </md-app-toolbar>
